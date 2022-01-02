@@ -4,27 +4,36 @@ from matplotlib.pyplot import *
 import copy
 from initValueGenerate import Lorenz96
 from parameterControl import *
-#import lorenz96
-#from settings import *
+from scipy.optimize import minimize
+from dataRecorder import RecordCollector
 
-class fourDVar:
+class threeDVar:
     def __init__(self, xInitAnalysis):
         self.xInitAnalysis = xInitAnalysis
         self.obsOperator = np.identity(Ngrid)
 
-    def forceODE(self, x, force=force):
-        return (np.roll(x, -1) - np.roll(x, 2)) * np.roll(x, 1) - x + force
+    def costFunction(self, analysisState, backgroundState, observationState, backgroundEC, observationEC):
+        H = self.obsOperator
+        backgroundCost = (backgroundState - analysisState).transpose() @ np.linalg.inv(backgroundEC) @ (backgroundState - analysisState)
 
-    # forecasting
-    def getForecastState(self, analysisState, startTime):
-        pass
+        innovation = observationState - H @ analysisState
+        observationCost = (innovation).transpose() @ np.linalg.inv(observationEC) @ (innovation)
+        return 0.5 * (backgroundCost + observationCost)
 
-    def getForcastEC(self, analysisState, analysisEC):
-        pass
+    def gradientOfCostFunction(self, analysisState, backgroundState, observationState, backgroundEC, observationEC):
+        H = self.obsOperator
+        gradientBackgroundCost = np.linalg.inv(backgroundEC) @ (analysisState - backgroundState)
+
+        innovation = observationState - H @ analysisState
+        gradientObservationCost = H.transpose() @ np.linalg.inv(observationEC) @ (innovation)
+        return gradientBackgroundCost - gradientObservationCost
 
     # analyzing
-    def getAnalysisState(self, forecastState, observationState, KalmanGain):
-        pass
+    def getAnalysisState(self, backgroundState, observationState, backgroundEC, observationEC):
+        analysisState = minimize(self.costFunction, x0=backgroundState, \
+                        args = (backgroundState, observationState, backgroundEC, observationEC), \
+                        method='CG', jac=self.gradientOfCostFunction).x
+        return analysisState
 
     def getAnalysisEC(self, forecastEC, KalmanGain, inflation=1):
         pass
@@ -37,30 +46,29 @@ if __name__ == "__main__":
     xTruth = np.loadtxt("initRecord/xTruth.txt")
 
     # covariance 
-    analysisEC = np.loadtxt("./initEC_{}.txt".format(noiseType))
-    observationEC = np.identity(Ngrid) * 0.4
+    analysisEC = np.loadtxt("initRecord/initEC_{}.txt".format(noiseType))
+    observationEC = np.identity(Ngrid) * noiseScale
 
     # collector
-    dataRecorder = RecordCollector(methodName="EKF", noiseType=noiseType)
+    dataRecorder = RecordCollector(methodName="threeDVar", noiseType=noiseType)
 
     # initial setup
-    ekf = ExtKalFil(xInitAnalysis)
-    ekf.analysisState = xInitAnalysis
-    ekf.analysisEC = analysisEC
-    ekf.observationState = xFullObservation[0]
-    ekf.observationEC = observationEC
-    print("{NT:02f}: {ERROR:05f}".format(NT=0, ERROR=np.sum((ekf.analysisState - ekf.observationState)**2)))
+    threeDvar = threeDVar(xInitAnalysis)
+    threeDvar.backgroundState = xInitAnalysis # presumed
+    threeDvar.backgroundEC = analysisEC # presumed
+    threeDvar.analysisState = xInitAnalysis
+    threeDvar.analysisEC = analysisEC
+    threeDvar.observationState = xFullObservation[0]
+    threeDvar.observationEC = observationEC
+    print("{NT:02f}: {ERROR:05f}".format(NT=0, ERROR=np.sum((threeDvar.analysisState - xTruth[i+1])**2)))
 
     for i, nowT in enumerate(timeArray[:-1]):
-        ekf.forecastState = ekf.getForecastState(analysisState=ekf.analysisState, startTime=nowT)
-        ekf.forecastEC = ekf.getForcastEC(analysisState=ekf.analysisState, analysisEC=ekf.analysisEC)
+        threeDvar.observationState = xFullObservation[i+1]
+        threeDvar.analysisState = threeDvar.getAnalysisState(backgroundState = threeDvar.backgroundState, \
+                                                             observationState = threeDvar.observationState, \
+                                                             backgroundEC = threeDvar.backgroundEC, \
+                                                             observationEC = threeDvar.observationEC)
+        print("{NT:02f}: {ERROR:05f}".format(NT=nowT+dT, ERROR=np.sqrt(np.mean((threeDvar.analysisState - xTruth[i+1])**2))))
 
-        ekf.observationState = xFullObservation[i+1]
-        ekf.KalmanGain = ekf.getAnalysisWeight(forecastState=ekf.forecastState, \
-                                               forecastEC=ekf.forecastEC, \
-                                               observationEC=ekf.observationEC)
-        ekf.analysisState = ekf.getAnalysisState(forecastState=ekf.forecastState, \
-                                                 observationState=ekf.observationState, \
-                                                 KalmanGain=ekf.KalmanGain)
-        ekf.analysisEC = ekf.getAnalysisEC(forecastEC=ekf.forecastEC, KalmanGain=ekf.KalmanGain, inflation=2.0)
-        print("{NT:02f}: {ERROR:05f}".format(NT=nowT+dT, ERROR=np.sqrt(np.mean((ekf.analysisState - ekf.observationState)**2))))
+
+

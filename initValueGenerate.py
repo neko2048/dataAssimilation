@@ -81,7 +81,7 @@ if __name__ == "__main__":
     # xAnalysis shape: (40, )
 
     # ========= build observation
-    stateGenerator.xObservation = stateGenerator.getSeriesObs(loc=0.0, scale=0.4, noiseType=noiseType)
+    stateGenerator.xObservation = stateGenerator.getSeriesObs(loc=0.0, scale=noiseScale, noiseType=noiseType)
     # xObservation shape: (201, 40)
     stateGenerator.xObservationEC = np.cov((stateGenerator.xObservation-stateGenerator.xTruth).transpose())
 
