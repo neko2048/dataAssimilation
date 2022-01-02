@@ -28,6 +28,13 @@ class threeDVar:
         gradientObservationCost = H.transpose() @ np.linalg.inv(observationEC) @ (innovation)
         return gradientBackgroundCost - gradientObservationCost
 
+    # forecast
+    def getForecastState(self, analysisState, nowT):
+        lorenz = Lorenz96(initValue=analysisState)
+        lorenz.solver = lorenz.getODESolver(initTime=nowT)
+        backgroundState = lorenz.solveODE(endTime=nowT+dT)
+        return backgroundState
+
     # analyzing
     def getAnalysisState(self, backgroundState, observationState, backgroundEC, observationEC):
         analysisState = minimize(self.costFunction, x0=backgroundState, \
@@ -46,17 +53,17 @@ if __name__ == "__main__":
 
     # covariance 
     analysisEC = np.loadtxt("initRecord/initEC_{}.txt".format(noiseType))
-    observationEC = np.identity(Ngrid) * noiseScale
+    observationEC = np.identity(Ngrid) * (noiseScale ** 2)
 
     # collector
     dataRecorder = RecordCollector(methodName="threeDVar", noiseType=noiseType)
 
     # initial setup
     threeDvar = threeDVar(xInitAnalysis)
-    threeDvar.backgroundState = xInitAnalysis # presumed
-    threeDvar.backgroundEC = analysisEC # presumed
     threeDvar.analysisState = xInitAnalysis
     threeDvar.analysisEC = analysisEC
+    threeDvar.backgroundState = xInitAnalysis # presumed
+    threeDvar.backgroundEC = analysisEC # presumed
     threeDvar.observationState = xFullObservation[0]
     threeDvar.observationEC = observationEC
     print("{NT:02f}: {ERROR:05f}".format(NT=0, ERROR=np.sum((threeDvar.analysisState - xTruth[0])**2)))
@@ -64,9 +71,7 @@ if __name__ == "__main__":
     for tidx, nowT in enumerate(timeArray[:-1]):
         threeDvar.observationState = xFullObservation[tidx+1]
 
-        lorenz = Lorenz96(initValue=threeDvar.backgroundState)
-        lorenz.solver = lorenz.getODESolver(initTime=nowT)
-        threeDvar.backgroundState = 
+        threeDvar.backgroundState = threeDvar.getForecastState(threeDvar.analysisState, nowT=nowT)
         threeDvar.analysisState = threeDvar.getAnalysisState(backgroundState = threeDvar.backgroundState, \
                                                              observationState = threeDvar.observationState, \
                                                              backgroundEC = threeDvar.backgroundEC, \

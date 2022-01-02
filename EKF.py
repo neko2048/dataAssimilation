@@ -76,7 +76,7 @@ if __name__ == "__main__":
 
     # covariance 
     analysisEC = np.loadtxt("initRecord/initEC_{}.txt".format(noiseType))
-    observationEC = np.identity(Ngrid) * noiseScale
+    observationEC = np.identity(Ngrid) * (noiseScale ** 2)
 
     # collector
     dataRecorder = RecordCollector(methodName="EKF", noiseType=noiseType)
