@@ -72,7 +72,6 @@ if __name__ == "__main__":
     # states
     xInitAnalysis = np.loadtxt("initRecord/xAnalysisInit.txt")
     xFullObservation = np.loadtxt("initRecord/xObservation_{}.txt".format(noiseType))
-    print(xFullObservation.shape)
     xTruth = np.loadtxt("initRecord/xTruth.txt")
 
     # covariance 
@@ -94,12 +93,12 @@ if __name__ == "__main__":
     ekf.MeanError = np.mean(ekf.analysisState - xTruth[0])
     dataRecorder.record(ekf, tidx=0)
 
-    for i, nowT in enumerate(timeArray[:-1]):
-        if round(nowT+dT, 2) % 1 == 0: print(round(nowT+dT, 2), i)
+    for tidx, nowT in enumerate(timeArray[:-1]):
+        if round(nowT+dT, 2) % 1 == 0: print(round(nowT+dT, 2), tidx)
         ekf.forecastState = ekf.getForecastState(analysisState=ekf.analysisState, startTime=nowT)
         ekf.forecastEC = ekf.getForcastEC(analysisState=ekf.analysisState, analysisEC=ekf.analysisEC)
 
-        ekf.observationState = xFullObservation[i+1]
+        ekf.observationState = xFullObservation[tidx+1]
         ekf.KalmanGain = ekf.getAnalysisWeight(forecastState=ekf.forecastState, \
                                                forecastEC=ekf.forecastEC, \
                                                observationEC=ekf.observationEC)
@@ -107,8 +106,8 @@ if __name__ == "__main__":
                                                  observationState=ekf.observationState, \
                                                  KalmanGain=ekf.KalmanGain)
         ekf.analysisEC = ekf.getAnalysisEC(forecastEC=ekf.forecastEC, KalmanGain=ekf.KalmanGain, inflation=2.0)
-        ekf.RMSE = np.sqrt(np.mean((ekf.analysisState - xTruth[i+1])**2))
-        dataRecorder.record(ekf, tidx=i+1)
+        ekf.RMSE = np.sqrt(np.mean((ekf.analysisState - xTruth[tidx+1])**2))
+        dataRecorder.record(ekf, tidx=tidx+1)
 
     dataRecorder.saveToTxt()
 
