@@ -42,9 +42,6 @@ class threeDVar:
                         method='CG', jac=self.gradientOfCostFunction).x
         return analysisState
 
-    def getAnalysisEC(self, forecastEC, KalmanGain, inflation=1):
-        pass
-
 if __name__ == "__main__":
     # states
     xInitAnalysis = np.loadtxt("initRecord/xAnalysisInit.txt")
@@ -62,21 +59,26 @@ if __name__ == "__main__":
     threeDvar = threeDVar(xInitAnalysis)
     threeDvar.analysisState = xInitAnalysis
     threeDvar.analysisEC = analysisEC
-    threeDvar.backgroundState = xInitAnalysis # presumed
-    threeDvar.backgroundEC = analysisEC # presumed
+    threeDvar.forecastState = xInitAnalysis # presumed
+    threeDvar.forecastEC = analysisEC # presumed
     threeDvar.observationState = xFullObservation[0]
     threeDvar.observationEC = observationEC
-    print("{NT:02f}: {ERROR:05f}".format(NT=0, ERROR=np.sum((threeDvar.analysisState - xTruth[0])**2)))
+    threeDvar.RMSE = np.sqrt(np.mean((threeDvar.analysisState - xTruth[0])**2))
+    threeDvar.MeanError = np.mean(threeDvar.analysisState - xTruth[0])
+    dataRecorder.record(threeDvar, tidx=0)
 
     for tidx, nowT in enumerate(timeArray[:-1]):
+        if round(nowT+dT, 2) % 1 == 0: print(round(nowT+dT, 2), tidx)
         threeDvar.observationState = xFullObservation[tidx+1]
 
-        threeDvar.backgroundState = threeDvar.getForecastState(threeDvar.analysisState, nowT=nowT)
-        threeDvar.analysisState = threeDvar.getAnalysisState(backgroundState = threeDvar.backgroundState, \
+        threeDvar.forecastState = threeDvar.getForecastState(threeDvar.analysisState, nowT=nowT)
+        threeDvar.analysisState = threeDvar.getAnalysisState(backgroundState = threeDvar.forecastState, \
                                                              observationState = threeDvar.observationState, \
-                                                             backgroundEC = threeDvar.backgroundEC, \
+                                                             backgroundEC = threeDvar.forecastEC, \
                                                              observationEC = threeDvar.observationEC)
-        print("{NT:02f}: {ERROR:05f}".format(NT=nowT+dT, ERROR=np.sqrt(np.mean((threeDvar.analysisState - xTruth[tidx+1])**2))))
 
+        threeDvar.RMSE = np.sqrt(np.mean((threeDvar.analysisState - xTruth[tidx+1])**2))
+        threeDvar.MeanError = np.mean(threeDvar.analysisState - xTruth[tidx+1])
+        dataRecorder.record(threeDvar, tidx=tidx+1)
 
-
+    dataRecorder.saveToTxt()

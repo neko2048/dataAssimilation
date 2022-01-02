@@ -107,6 +107,7 @@ if __name__ == "__main__":
                                                  KalmanGain=ekf.KalmanGain)
         ekf.analysisEC = ekf.getAnalysisEC(forecastEC=ekf.forecastEC, KalmanGain=ekf.KalmanGain, inflation=2.0)
         ekf.RMSE = np.sqrt(np.mean((ekf.analysisState - xTruth[tidx+1])**2))
+        ekf.MeanError = np.mean(ekf.analysisState - xTruth[tidx+1])
         dataRecorder.record(ekf, tidx=tidx+1)
 
     dataRecorder.saveToTxt()
