@@ -1,10 +1,10 @@
 import numpy as np
 from scipy.integrate import ode
-from matplotlib.pyplot import *
 import copy
+from scipy.optimize import minimize
+
 from initValueGenerate import Lorenz96
 from parameterControl import *
-from scipy.optimize import minimize
 from dataRecorder import RecordCollector
 
 class threeDVar:

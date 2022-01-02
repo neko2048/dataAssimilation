@@ -5,7 +5,7 @@ force = 8.
 timeLength = 10
 dT = 0.05
 dx = 1
-saveOpt = True
+saveOpt = False
 noiseType = "Gaussian"
 noiseScale = 0.4
 # ========== spin-up settings
