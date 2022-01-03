@@ -1,2 +1,3 @@
 *.txt
 ./reference_code
+.DS_Store
