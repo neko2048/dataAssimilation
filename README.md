@@ -15,7 +15,7 @@ Created needed data including observation, truth, and initial analysis guess:
 2. Generate needed data: `$ python dataRecorder.py` -> placed in `./initRecord`
 3. OUTPUT:
   * `initRecord/observationOperator`: for all algorithm use
-  * `initRecord/*ObservationNoiseType*/`:
+  * `initRecord/*ObservationNoiseType*_*NoiseScale*/`:
     * observation in full/sparse
     * truth in full/sparse
     * initial error covariance
