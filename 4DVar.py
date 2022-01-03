@@ -113,7 +113,7 @@ if __name__ == "__main__":
     fourDvar.MeanError = np.mean(fourDvar.analysisState - xTruth[0])
     print("{:02f}: {:05f}".format(0, fourDvar.RMSE))
     dataRecorder.record(fourDvar, tidx=0)
-    
+
     for tidx, nowT in enumerate(timeArray[:-2]):
         fourDvar.observationWindowState = fourDvar.getObservationFromWindow(xFullObservation, tidx=tidx+1)
         fourDvar.observationState = fourDvar.observationWindowState[0]
