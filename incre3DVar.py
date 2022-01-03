@@ -7,7 +7,7 @@ from initValueGenerate import Lorenz96
 from parameterControl import *
 from dataRecorder import RecordCollector
 
-class fourDVar:
+class increThreeDVar:
     def __init__(self, xInitAnalysis):
         self.xInitAnalysis = xInitAnalysis
         self.obsOperator = np.identity(Ngrid)
@@ -70,31 +70,31 @@ if __name__ == "__main__":
     observationEC = np.identity(Ngrid) * (noiseScale ** 2)
 
     # collector
-    dataRecorder = RecordCollector(methodName="fourDVar", noiseType=noiseType)
+    dataRecorder = RecordCollector(methodName="increThreeDVar", noiseType=noiseType)
 
     # initial setup
-    fourDvar = fourDVar(xInitAnalysis)
-    fourDvar.analysisState = xInitAnalysis
-    fourDvar.analysisEC = analysisEC
-    fourDvar.forecastState = xInitAnalysis # presumed
-    fourDvar.forecastEC = analysisEC # presumed
-    fourDvar.observationState = xFullObservation[0]
-    fourDvar.observationEC = observationEC
-    fourDvar.RMSE = np.sqrt(np.mean((fourDvar.analysisState - xTruth[0])**2))
-    fourDvar.MeanError = np.mean(fourDvar.analysisState - xTruth[0])
-    dataRecorder.record(fourDvar, tidx=0)
-    print("{:02f}: {:05f}".format(0, fourDvar.RMSE))
+    increThreeDvar = increThreeDVar(xInitAnalysis)
+    increThreeDvar.analysisState = xInitAnalysis
+    increThreeDvar.analysisEC = analysisEC
+    increThreeDvar.forecastState = xInitAnalysis # presumed
+    increThreeDvar.forecastEC = analysisEC # presumed
+    increThreeDvar.observationState = xFullObservation[0]
+    increThreeDvar.observationEC = observationEC
+    increThreeDvar.RMSE = np.sqrt(np.mean((increThreeDvar.analysisState - xTruth[0])**2))
+    increThreeDvar.MeanError = np.mean(increThreeDvar.analysisState - xTruth[0])
+    dataRecorder.record(increThreeDvar, tidx=0)
+    print("{:02f}: {:05f}".format(0, increThreeDvar.RMSE))
     for tidx, nowT in enumerate(timeArray[:-1]):
-        fourDvar.observationState = xFullObservation[tidx+1]
+        increThreeDvar.observationState = xFullObservation[tidx+1]
 
-        fourDvar.forecastState = fourDvar.getForecastState(fourDvar.analysisState, nowT=nowT)
-        fourDvar.analysisState = fourDvar.getAnalysisState(backgroundState = fourDvar.forecastState, \
-                                                                       observationState = fourDvar.observationState, \
-                                                                       backgroundEC = fourDvar.forecastEC, \
-                                                                       observationEC = fourDvar.observationEC)
+        increThreeDvar.forecastState = increThreeDvar.getForecastState(increThreeDvar.analysisState, nowT=nowT)
+        increThreeDvar.analysisState = increThreeDvar.getAnalysisState(backgroundState = increThreeDvar.forecastState, \
+                                                                       observationState = increThreeDvar.observationState, \
+                                                                       backgroundEC = increThreeDvar.forecastEC, \
+                                                                       observationEC = increThreeDvar.observationEC)
 
-        fourDvar.RMSE = np.sqrt(np.mean((fourDvar.analysisState - xTruth[tidx+1])**2))
-        fourDvar.MeanError = np.mean(fourDvar.analysisState - xTruth[tidx+1])
-        dataRecorder.record(fourDvar, tidx=tidx+1)
-        print("{:02f}: {:05f}".format(nowT+dT, fourDvar.RMSE))
+        increThreeDvar.RMSE = np.sqrt(np.mean((increThreeDvar.analysisState - xTruth[tidx+1])**2))
+        increThreeDvar.MeanError = np.mean(increThreeDvar.analysisState - xTruth[tidx+1])
+        dataRecorder.record(increThreeDvar, tidx=tidx+1)
+        print("{:02f}: {:05f}".format(nowT+dT, increThreeDvar.RMSE))
     dataRecorder.saveToTxt()

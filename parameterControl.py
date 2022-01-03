@@ -4,8 +4,9 @@ Ngrid = 40
 force = 8.
 timeLength = 10
 dT = 0.05
+intensedT = 0.01
 dx = 1
-saveOpt = False
+saveOpt = True
 noiseType = "Gaussian"
 noiseScale = 0.4
 # ========== spin-up settings
@@ -14,3 +15,5 @@ initSpingUpTime = 100.
 # ========== time control
 timeArray = np.arange(0, timeLength+dT, dT)
 NtimeStep = len(timeArray)
+intenseTimeArray = np.arange(0, timeLength+intensedT, intensedT)
+intesneNtimeStep = len(intenseTimeArray)

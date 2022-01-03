@@ -27,7 +27,7 @@ class Lorenz96:
         return xSolution
 
 class dataGenerator:
-    def __init__(self):
+    def __init__(self, NtimeStep):
         self.Ngrid = Ngrid
         self.initPerturb = initPerturb
         self.initSpingUpTime = initSpingUpTime
@@ -56,8 +56,8 @@ class dataGenerator:
             nowTimeStep += 1
         return xTruth
 
-    def getSeriesObs(self, loc, scale, noiseType):
-        XObservation = copy.deepcopy(self.xTruth)
+    def getSeriesObs(self, xTruth, loc, scale, noiseType):
+        XObservation = copy.deepcopy(xTruth)
         if noiseType == "Gaussian":
             for i in range(self.NtimeStep):
                 noise = np.random.normal(loc, scale, size=(Ngrid, ))
@@ -70,24 +70,37 @@ class dataGenerator:
                 pass
         return XObservation
 
+    def sparseVar(self, var, skip=5):
+        sparseVar = var[::skip]
+        return sparseVar
+
 if __name__ == "__main__":
     # ========== build truth
-    stateGenerator = dataGenerator()
-    stateGenerator.xTruth = stateGenerator.getSeriesTruth()
-    # xTruth shape: (201, 40)
+    stateGenerator = dataGenerator(NtimeStep=intesneNtimeStep)
+    truthState = stateGenerator.getSeriesTruth()
+    # truthState shape: (1001, 40)
+    sparseTruthState  = stateGenerator.sparseVar(truthState)
+    # sparseTruthState shape: (201, 40)
 
     # ========= build analysis init state
-    stateGenerator.xAnalysis = stateGenerator.getInitValue()
-    # xAnalysis shape: (40, )
+    initAnalysisState = stateGenerator.getInitValue()
+    # initAnalysisState shape: (40, )
+
 
     # ========= build observation
-    stateGenerator.xObservation = stateGenerator.getSeriesObs(loc=0.0, scale=noiseScale, noiseType=noiseType)
-    # xObservation shape: (201, 40)
-    stateGenerator.xObservationEC = np.cov((stateGenerator.xObservation-stateGenerator.xTruth).transpose())
+    fullObservationState = stateGenerator.getSeriesObs(xTruth = truthState, loc=0.0, scale=noiseScale, noiseType=noiseType)
+    # fullObservationState shape: (1001, 40)
+    observationEC = np.cov((fullObservationState - truthState).transpose())
+    sparseObservationState = stateGenerator.sparseVar(fullObservationState)
+    # sparseObservationState shape: (201, 40)
 
     if saveOpt:
-        np.savetxt('initRecord/xTruth.txt', stateGenerator.xTruth)
-        np.savetxt('initRecord/xAnalysisInit.txt', stateGenerator.xAnalysis)
-        np.savetxt('initRecord/xObservation_{}.txt'.format(noiseType), stateGenerator.xObservation)
-        np.savetxt('initRecord/initEC_{}.txt'.format(noiseType), stateGenerator.xObservationEC)
-        print("saved successfully in ./initRecord")
+        np.savetxt('initRecord/{}/truthState.txt'.format(noiseType), truthState)
+        np.savetxt('initRecord/{}/sparseTruthState.txt'.format(noiseType), sparseTruthState)
+        np.savetxt('initRecord/{}/initAnalysisState.txt'.format(noiseType), initAnalysisState)
+        np.savetxt('initRecord/{}/fullObservationState.txt'.format(noiseType), fullObservationState)
+        np.savetxt('initRecord/{}/sparseObservationState.txt'.format(noiseType), sparseObservationState)
+        np.savetxt('initRecord/{}/initEC.txt'.format(noiseType), observationEC)
+        print("saved successfully in ./initRecord/{}".format(noiseType))
+
+
