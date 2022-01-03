@@ -38,23 +38,25 @@ class increThreeDVar:
         guessState = backgroundState
         for outer in range(NouterLoop):
             guessState = self.outerLoop(guessState=guessState, \
+                                        backgroundState=backgroundState, \
                                         observationState = observationState, \
                                         backgroundEC = backgroundEC, 
                                         observationEC = observationEC)
         return guessState
 
-    def outerLoop(self, guessState, observationState, backgroundEC, observationEC, NinnerLoop=5):
+    def outerLoop(self, guessState, backgroundState, observationState, backgroundEC, observationEC, NinnerLoop=5):
         innovation = observationState - self.obsOperator @ guessState
+        guessIncrement = guessState - backgroundState
         for inner in range(NinnerLoop):
-            analysisIncrement = self.innerLoop(initGuessState = guessState, \
+            analysisIncrement = self.innerLoop(guessIncrement = guessState, \
                                                innovation = innovation, \
                                                backgroundEC = backgroundEC, \
                                                observationEC = observationEC)
         guessState += analysisIncrement
         return guessState
 
-    def innerLoop(self, initGuessState, innovation, backgroundEC, observationEC):
-        analysisIncrement = minimize(self.costFunction, x0=initGuessState, \
+    def innerLoop(self, guessIncrement, innovation, backgroundEC, observationEC):
+        analysisIncrement = minimize(self.costFunction, x0=guessIncrement, \
                             args = (innovation, backgroundEC, observationEC), \
                             method='CG', jac=self.gradientOfCostFunction).x
         return analysisIncrement
@@ -97,4 +99,4 @@ if __name__ == "__main__":
         increThreeDvar.MeanError = np.mean(increThreeDvar.analysisState - xTruth[tidx+1])
         dataRecorder.record(increThreeDvar, tidx=tidx+1)
         print("{:02f}: {:05f}".format(nowT+dT, increThreeDvar.RMSE))
-    #dataRecorder.saveToTxt()
+    dataRecorder.saveToTxt()

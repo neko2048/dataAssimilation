@@ -152,4 +152,4 @@ if __name__ == "__main__":
         increFourDvar.MeanError = np.mean(increFourDvar.analysisState - increFourDvar.truthState[0])
         print("{:02f}: {:05f}".format(nowT+dT, increFourDvar.RMSE))
         dataRecorder.record(increFourDvar, tidx=tidx+1)
-    #dataRecorder.saveToTxt()
+    dataRecorder.saveToTxt()
