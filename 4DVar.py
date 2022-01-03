@@ -24,7 +24,6 @@ class fourDVar:
 
         totalCost = backgroundCost
         for i in range(NwindowSample+1): # including head and tail
-            print(observationState.shape, trajectoryState.shape)
             innovation = observationState[i] - H @ trajectoryState[i]
             observationCost = (innovation).transpose() @ np.linalg.inv(observationEC) @ (innovation)
             totalCost += observationCost
@@ -107,24 +106,26 @@ if __name__ == "__main__":
     fourDvar.analysisEC = analysisEC
     fourDvar.forecastState = xInitAnalysis # presumed
     fourDvar.forecastEC = analysisEC # presumed
-    fourDvar.observationState = fourDvar.getObservationFromWindow(xFullObservation, tidx=0)
+    fourDvar.observationWindowState = fourDvar.getObservationFromWindow(xFullObservation, tidx=0)
+    fourDvar.observationState = fourDvar.observationWindowState[0]
     fourDvar.observationEC = observationEC
     fourDvar.RMSE = np.sqrt(np.mean((fourDvar.analysisState - xTruth[0])**2))
     fourDvar.MeanError = np.mean(fourDvar.analysisState - xTruth[0])
     print("{:02f}: {:05f}".format(0, fourDvar.RMSE))
-    #dataRecorder.record(fourDvar, tidx=0)
+    dataRecorder.record(fourDvar, tidx=0)
     
     for tidx, nowT in enumerate(timeArray[:-2]):
-        fourDvar.observationState = fourDvar.getObservationFromWindow(xFullObservation, tidx=tidx+1)
+        fourDvar.observationWindowState = fourDvar.getObservationFromWindow(xFullObservation, tidx=tidx+1)
+        fourDvar.observationState = fourDvar.observationWindowState[0]
         fourDvar.truthState = fourDvar.getObservationFromWindow(xTruth, tidx=tidx+1)
         fourDvar.forecastState = fourDvar.getForecastState(fourDvar.analysisState, nowT=nowT)
         fourDvar.analysisState = fourDvar.getAnalysisState(backgroundState=fourDvar.forecastState, \
-                                                           observationState=fourDvar.observationState, \
+                                                           observationState=fourDvar.observationWindowState, \
                                                            backgroundEC=fourDvar.forecastEC, \
                                                            observationEC=fourDvar.observationEC)
 
         fourDvar.RMSE = np.sqrt(np.mean((fourDvar.analysisState - fourDvar.truthState[0])**2))
         fourDvar.MeanError = np.mean(fourDvar.analysisState - fourDvar.truthState[0])
         print("{:02f}: {:05f}".format(nowT+dT, fourDvar.RMSE))
-        #dataRecorder.record(fourDvar, tidx=tidx+1)
-    #dataRecorder.saveToTxt()
+        dataRecorder.record(fourDvar, tidx=tidx+1)
+    dataRecorder.saveToTxt()
