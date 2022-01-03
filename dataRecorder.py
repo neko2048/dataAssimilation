@@ -1,5 +1,5 @@
 from parameterControl import *
-    
+
 class RecordCollector:
     def __init__(self, methodName, noiseType):
         self.methodName = methodName

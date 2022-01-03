@@ -10,7 +10,7 @@ from dataRecorder import RecordCollector
 class increThreeDVar:
     def __init__(self, xInitAnalysis):
         self.xInitAnalysis = xInitAnalysis
-        self.obsOperator = np.identity(Ngrid)
+        self.obsOperator = np.loadtxt("initRecord/observationOperator.txt")
 
     def costFunction(self, analysisIncrement, innovation, backgroundEC, observationEC):
         H = self.obsOperator

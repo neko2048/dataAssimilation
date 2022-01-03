@@ -49,7 +49,7 @@ class dataGenerator:
         solver = self.lorenz96.getODESolver()
         nowTimeStep = 1
         while solver.successful() and nowTimeStep <= self.NtimeStep-1: # exclude zero
-            solver.integrate(solver.t + dT)
+            solver.integrate(solver.t + intensedT)
             xTruth = np.vstack([xTruth, [solver.y]])
             if nowTimeStep % 50 == 0:
                 print("Current TimeStep: {NTS:03d} | Time: {ST}".format(NTS=nowTimeStep, ST=round(solver.t, 5)))
@@ -96,8 +96,6 @@ if __name__ == "__main__":
 
     # ========== Observation Operator for all DA method
     observationOperator = np.identity(Ngrid)
-    for i in range(0, Ngrid, 2):
-        observationOperator[i, i] = 0
 
     if saveOpt:
         np.savetxt('initRecord/{}/truthState.txt'.format(noiseType), truthState)

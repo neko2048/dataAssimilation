@@ -8,7 +8,7 @@ intensedT = 0.01
 dx = 1
 saveOpt = True
 noiseType = "Gaussian"
-noiseScale = 0.2
+noiseScale = 0.4
 # ========== spin-up settings
 initPerturb = 0.1
 initSpingUpTime = 100.

@@ -1,13 +1,13 @@
 import numpy as np
 from scipy.integrate import ode
-
+from matplotlib.pyplot import *
 from initValueGenerate import Lorenz96
 from parameterControl import *
 from dataRecorder import RecordCollector
 class ExtKalFil:
     def __init__(self, xInitAnalysis):
         self.xInitAnalysis = xInitAnalysis
-        self.obsOperator = np.identity(Ngrid)
+        self.obsOperator = np.loadtxt("initRecord/observationOperator.txt")
 
     def forceODE(self, x, force=force):
         return (np.roll(x, -1) - np.roll(x, 2)) * np.roll(x, 1) - x + force
@@ -82,7 +82,6 @@ if __name__ == "__main__":
 
     # initial setup
     ekf = ExtKalFil(xInitAnalysis)
-    ekf.observationOperator = np.loadtxt("initRecord/observationOperator.txt")
     ekf.analysisState = xInitAnalysis
     ekf.analysisEC = analysisEC
     ekf.observationState = xFullObservation[0]
@@ -92,9 +91,9 @@ if __name__ == "__main__":
     ekf.RMSE = np.sum((ekf.analysisState - xTruth[0])**2)
     ekf.MeanError = np.mean(ekf.analysisState - xTruth[0])
     dataRecorder.record(ekf, tidx=0)
+    print("{:02f}: {:05f}".format(0, ekf.RMSE))
 
     for tidx, nowT in enumerate(timeArray[:-1]):
-        if round(nowT+dT, 2) % 1 == 0: print(round(nowT+dT, 2), ekf.RMSE)
         ekf.forecastState = ekf.getForecastState(analysisState=ekf.analysisState, startTime=nowT)
         ekf.forecastEC = ekf.getForcastEC(analysisState=ekf.analysisState, analysisEC=ekf.analysisEC)
 
@@ -105,12 +104,12 @@ if __name__ == "__main__":
         ekf.analysisState = ekf.getAnalysisState(forecastState=ekf.forecastState, \
                                                  observationState=ekf.observationState, \
                                                  KalmanGain=ekf.KalmanGain)
-        ekf.analysisEC = ekf.getAnalysisEC(forecastEC=ekf.forecastEC, KalmanGain=ekf.KalmanGain, inflation=2.0)
+        ekf.analysisEC = ekf.getAnalysisEC(forecastEC=ekf.forecastEC, KalmanGain=ekf.KalmanGain, inflation=2)
         ekf.RMSE = np.sqrt(np.mean((ekf.analysisState - xTruth[tidx+1])**2))
         ekf.MeanError = np.mean(ekf.analysisState - xTruth[tidx+1])
         dataRecorder.record(ekf, tidx=tidx+1)
-
-    #dataRecorder.saveToTxt()
+        print("{:02f}: {:05f}".format(nowT+dT, ekf.RMSE))
+    dataRecorder.saveToTxt()
 
 
 

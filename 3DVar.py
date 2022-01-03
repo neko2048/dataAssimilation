@@ -10,7 +10,7 @@ from dataRecorder import RecordCollector
 class threeDVar:
     def __init__(self, xInitAnalysis):
         self.xInitAnalysis = xInitAnalysis
-        self.obsOperator = np.identity(Ngrid)
+        self.obsOperator = np.loadtxt("initRecord/observationOperator.txt")
 
     def costFunction(self, analysisState, backgroundState, observationState, backgroundEC, observationEC):
         H = self.obsOperator
@@ -66,9 +66,8 @@ if __name__ == "__main__":
     threeDvar.RMSE = np.sqrt(np.mean((threeDvar.analysisState - xTruth[0])**2))
     threeDvar.MeanError = np.mean(threeDvar.analysisState - xTruth[0])
     dataRecorder.record(threeDvar, tidx=0)
-
+    print("{:02f}: {:05f}".format(0, threeDvar.RMSE))
     for tidx, nowT in enumerate(timeArray[:-1]):
-        if round(nowT+dT, 2) % 1 == 0: print(round(nowT+dT, 2), tidx)
         threeDvar.observationState = xFullObservation[tidx+1]
 
         threeDvar.forecastState = threeDvar.getForecastState(threeDvar.analysisState, nowT=nowT)
@@ -80,5 +79,5 @@ if __name__ == "__main__":
         threeDvar.RMSE = np.sqrt(np.mean((threeDvar.analysisState - xTruth[tidx+1])**2))
         threeDvar.MeanError = np.mean(threeDvar.analysisState - xTruth[tidx+1])
         dataRecorder.record(threeDvar, tidx=tidx+1)
-
-    #dataRecorder.saveToTxt()
+        print("{:02f}: {:05f}".format(nowT+dT, threeDvar.RMSE))
+    dataRecorder.saveToTxt()
