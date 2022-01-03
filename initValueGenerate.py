@@ -67,6 +67,12 @@ class dataGenerator:
             for i in range(self.NtimeStep):
                 noise = np.random.laplace(loc, scale, size=(Ngrid, ))
                 XObservation[i] += noise
+        elif noiseType == "Mixing":
+            for i in range(self.NtimeStep):
+                laplaceNoise = np.random.laplace(loc, scale, size=(int(Ngrid * (1 - gaussianRatio), )))
+                gaussianNoise = np.random.normal(loc, scale, size=(int(Ngrid * (gaussianRatio), )))
+                noise = np.hstack((laplaceNoise, gaussianNoise))
+                XObservation[i] += noise
         elif noiseType == "None":
             pass
         return XObservation
@@ -99,12 +105,12 @@ if __name__ == "__main__":
     observationOperator = np.identity(Ngrid)
 
     if isSave:
-        pathlib.Path("./initRecord").mkdir(parents=True, exist_ok=True)
-        np.savetxt('initRecord/{}/truthState.txt'.format(noiseType), truthState)
-        np.savetxt('initRecord/{}/sparseTruthState.txt'.format(noiseType), sparseTruthState)
-        np.savetxt('initRecord/{}/initAnalysisState.txt'.format(noiseType), initAnalysisState)
-        np.savetxt('initRecord/{}/fullObservationState.txt'.format(noiseType), fullObservationState)
-        np.savetxt('initRecord/{}/sparseObservationState.txt'.format(noiseType), sparseObservationState)
-        np.savetxt('initRecord/{}/initEC.txt'.format(noiseType), observationEC)
+        pathlib.Path("./initRecord/{}".format(subFolderName)).mkdir(parents=True, exist_ok=True)
+        np.savetxt('initRecord/{}/truthState.txt'.format(subFolderName), truthState)
+        np.savetxt('initRecord/{}/sparseTruthState.txt'.format(subFolderName), sparseTruthState)
+        np.savetxt('initRecord/{}/initAnalysisState.txt'.format(subFolderName), initAnalysisState)
+        np.savetxt('initRecord/{}/fullObservationState.txt'.format(subFolderName), fullObservationState)
+        np.savetxt('initRecord/{}/sparseObservationState.txt'.format(subFolderName), sparseObservationState)
+        np.savetxt('initRecord/{}/initEC.txt'.format(subFolderName), observationEC)
         np.savetxt('initRecord/observationOperator.txt', observationOperator)
-        print("saved successfully in ./initRecord/{}".format(noiseType))
+        print("saved successfully in ./initRecord/{}".format(subFolderName))

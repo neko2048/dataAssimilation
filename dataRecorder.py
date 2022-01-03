@@ -33,12 +33,12 @@ class RecordCollector:
         pathlib.Path(goalDir).mkdir(parents=True, exist_ok=True)
 
     def saveToTxt(self):
-        np.savetxt("{}_record/{}_{}_analysisState.txt".format(self.methodName, self.noiseType, noiseScale), self.analysisState)
+        np.savetxt("{}_record/{}_analysisState.txt".format(self.methodName, subFolderName), self.analysisState)
         #np.savetxt("{}_record/{}_analysisEC.txt".format(self.methodName, self.noiseType), self.analysisEC)
-        np.savetxt("{}_record/{}_{}_forecastState.txt".format(self.methodName, self.noiseType, noiseScale), self.forecastState)
+        np.savetxt("{}_record/{}_forecastState.txt".format(self.methodName, subFolderName), self.forecastState)
         #np.savetxt("{}_record/{}_forecastEC.txt".format(self.methodName, self.noiseType), self.forecastEC)
-        np.savetxt("{}_record/{}_{}_observationState.txt".format(self.methodName, self.noiseType, noiseScale), self.observationState)
+        np.savetxt("{}_record/{}_observationState.txt".format(self.methodName, subFolderName), self.observationState)
         #np.savetxt("{}/{}_observationEC.txt".format(self.methodName, self.noiseType), self.observationEC)
-        np.savetxt("{}_record/{}_{}_RMSE.txt".format(self.methodName, self.noiseType, noiseScale), self.RMSE)
-        np.savetxt("{}_record/{}_{}_MeanError.txt".format(self.methodName, self.noiseType, noiseScale), self.MeanError)
+        np.savetxt("{}_record/{}_RMSE.txt".format(self.methodName, subFolderName), self.RMSE)
+        np.savetxt("{}_record/{}_MeanError.txt".format(self.methodName, subFolderName), self.MeanError)
         print("Save successfully")

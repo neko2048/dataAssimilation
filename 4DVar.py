@@ -89,12 +89,12 @@ class fourDVar:
 
 if __name__ == "__main__":
     # states (intense version is loaded)
-    xInitAnalysis = np.loadtxt("initRecord/{}/initAnalysisState.txt".format(noiseType))
-    xFullObservation = np.loadtxt("initRecord/{}/fullObservationState.txt".format(noiseType))
-    xTruth = np.loadtxt("initRecord/{}/TruthState.txt".format(noiseType))
+    xInitAnalysis = np.loadtxt("initRecord/{}/initAnalysisState.txt".format(subFolderName))
+    xFullObservation = np.loadtxt("initRecord/{}/fullObservationState.txt".format(subFolderName))
+    xTruth = np.loadtxt("initRecord/{}/TruthState.txt".format(subFolderName))
 
     # covariance 
-    analysisEC = np.loadtxt("initRecord/{}/initEC.txt".format(noiseType))
+    analysisEC = np.loadtxt("initRecord/{}/initEC.txt".format(subFolderName))
     observationEC = np.identity(Ngrid) * (noiseScale ** 2)
  
     # collector
