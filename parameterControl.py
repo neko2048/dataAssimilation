@@ -5,6 +5,7 @@ force = 8.
 timeLength = 10
 dT = 0.05
 intensedT = 0.01
+NwindowSample = int(dT/intensedT) # used in 4DVar
 dx = 1
 saveOpt = True
 noiseType = "Gaussian"
