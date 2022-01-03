@@ -44,12 +44,12 @@ class threeDVar:
 
 if __name__ == "__main__":
     # states
-    xInitAnalysis = np.loadtxt("initRecord/xAnalysisInit.txt")
-    xFullObservation = np.loadtxt("initRecord/xObservation_{}.txt".format(noiseType))
-    xTruth = np.loadtxt("initRecord/xTruth.txt")
+    xInitAnalysis = np.loadtxt("initRecord/{}/initAnalysisState.txt".format(noiseType))
+    xFullObservation = np.loadtxt("initRecord/{}/sparseObservationState.txt".format(noiseType))
+    xTruth = np.loadtxt("initRecord/{}/sparseTruthState.txt".format(noiseType))
 
     # covariance 
-    analysisEC = np.loadtxt("initRecord/initEC_{}.txt".format(noiseType))
+    analysisEC = np.loadtxt("initRecord/{}/initEC.txt".format(noiseType))
     observationEC = np.identity(Ngrid) * (noiseScale ** 2)
 
     # collector
@@ -81,4 +81,4 @@ if __name__ == "__main__":
         threeDvar.MeanError = np.mean(threeDvar.analysisState - xTruth[tidx+1])
         dataRecorder.record(threeDvar, tidx=tidx+1)
 
-    dataRecorder.saveToTxt()
+    #dataRecorder.saveToTxt()
