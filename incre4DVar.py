@@ -123,6 +123,8 @@ if __name__ == "__main__":
 
     # collector
     dataRecorder = RecordCollector(methodName="fourDVar", noiseType=noiseType)
+    if not dataRecorder.checkDirExists():
+        dataRecorder.makeDir()
 
     # initial setup
     increFourDvar = increFourDVar(xInitAnalysis)

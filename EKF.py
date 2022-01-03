@@ -79,6 +79,8 @@ if __name__ == "__main__":
 
     # collector
     dataRecorder = RecordCollector(methodName="EKF", noiseType=noiseType)
+    if not dataRecorder.checkDirExists():
+        dataRecorder.makeDir()
 
     # initial setup
     ekf = ExtKalFil(xInitAnalysis)

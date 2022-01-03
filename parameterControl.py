@@ -7,7 +7,7 @@ dT = 0.05
 intensedT = 0.01
 NwindowSample = int(dT/intensedT) # used in 4DVar
 dx = 1
-saveOpt = True
+isSave = True
 noiseType = "Gaussian"
 noiseScale = 0.4
 # ========== spin-up settings

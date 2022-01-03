@@ -96,9 +96,11 @@ if __name__ == "__main__":
     # covariance 
     analysisEC = np.loadtxt("initRecord/{}/initEC.txt".format(noiseType))
     observationEC = np.identity(Ngrid) * (noiseScale ** 2)
-
+ 
     # collector
     dataRecorder = RecordCollector(methodName="fourDVar", noiseType=noiseType)
+    if not dataRecorder.checkDirExists():
+        dataRecorder.makeDir()
 
     # initial setup
     fourDvar = fourDVar(xInitAnalysis)

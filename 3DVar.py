@@ -54,6 +54,8 @@ if __name__ == "__main__":
 
     # collector
     dataRecorder = RecordCollector(methodName="threeDVar", noiseType=noiseType)
+    if not dataRecorder.checkDirExists():
+        dataRecorder.makeDir()
 
     # initial setup
     threeDvar = threeDVar(xInitAnalysis)

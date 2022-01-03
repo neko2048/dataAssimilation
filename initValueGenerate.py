@@ -2,6 +2,7 @@ import numpy as np
 from scipy.integrate import ode
 from matplotlib.pyplot import *
 import copy
+import pathlib
 from parameterControl import *
 
 class Lorenz96:
@@ -97,7 +98,8 @@ if __name__ == "__main__":
     # ========== Observation Operator for all DA method
     observationOperator = np.identity(Ngrid)
 
-    if saveOpt:
+    if isSave:
+        pathlib.Path("./initRecord").mkdir(parents=True, exist_ok=True)
         np.savetxt('initRecord/{}/truthState.txt'.format(noiseType), truthState)
         np.savetxt('initRecord/{}/sparseTruthState.txt'.format(noiseType), sparseTruthState)
         np.savetxt('initRecord/{}/initAnalysisState.txt'.format(noiseType), initAnalysisState)

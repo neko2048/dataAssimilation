@@ -73,6 +73,8 @@ if __name__ == "__main__":
 
     # collector
     dataRecorder = RecordCollector(methodName="increThreeDVar", noiseType=noiseType)
+    if not dataRecorder.checkDirExists():
+        dataRecorder.makeDir()
 
     # initial setup
     increThreeDvar = increThreeDVar(xInitAnalysis)
