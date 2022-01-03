@@ -82,6 +82,7 @@ if __name__ == "__main__":
 
     # initial setup
     ekf = ExtKalFil(xInitAnalysis)
+    ekf.observationOperator = np.loadtxt("initRecord/observationOperator.txt")
     ekf.analysisState = xInitAnalysis
     ekf.analysisEC = analysisEC
     ekf.observationState = xFullObservation[0]
@@ -93,7 +94,7 @@ if __name__ == "__main__":
     dataRecorder.record(ekf, tidx=0)
 
     for tidx, nowT in enumerate(timeArray[:-1]):
-        if round(nowT+dT, 2) % 1 == 0: print(round(nowT+dT, 2), tidx)
+        if round(nowT+dT, 2) % 1 == 0: print(round(nowT+dT, 2), ekf.RMSE)
         ekf.forecastState = ekf.getForecastState(analysisState=ekf.analysisState, startTime=nowT)
         ekf.forecastEC = ekf.getForcastEC(analysisState=ekf.analysisState, analysisEC=ekf.analysisEC)
 
@@ -109,7 +110,7 @@ if __name__ == "__main__":
         ekf.MeanError = np.mean(ekf.analysisState - xTruth[tidx+1])
         dataRecorder.record(ekf, tidx=tidx+1)
 
-    dataRecorder.saveToTxt()
+    #dataRecorder.saveToTxt()
 
 
 

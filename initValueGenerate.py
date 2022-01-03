@@ -67,7 +67,7 @@ class dataGenerator:
                 noise = np.random.laplace(loc, scale, size=(Ngrid, ))
                 XObservation[i] += noise
         elif noiseType == "None":
-                pass
+            pass
         return XObservation
 
     def sparseVar(self, var, skip=5):
@@ -94,6 +94,11 @@ if __name__ == "__main__":
     sparseObservationState = stateGenerator.sparseVar(fullObservationState)
     # sparseObservationState shape: (201, 40)
 
+    # ========== Observation Operator for all DA method
+    observationOperator = np.identity(Ngrid)
+    for i in range(0, Ngrid, 2):
+        observationOperator[i, i] = 0
+
     if saveOpt:
         np.savetxt('initRecord/{}/truthState.txt'.format(noiseType), truthState)
         np.savetxt('initRecord/{}/sparseTruthState.txt'.format(noiseType), sparseTruthState)
@@ -101,6 +106,5 @@ if __name__ == "__main__":
         np.savetxt('initRecord/{}/fullObservationState.txt'.format(noiseType), fullObservationState)
         np.savetxt('initRecord/{}/sparseObservationState.txt'.format(noiseType), sparseObservationState)
         np.savetxt('initRecord/{}/initEC.txt'.format(noiseType), observationEC)
+        np.savetxt('initRecord/observationOperator.txt', observationOperator)
         print("saved successfully in ./initRecord/{}".format(noiseType))
-
-

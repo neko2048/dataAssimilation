@@ -8,7 +8,7 @@ intensedT = 0.01
 dx = 1
 saveOpt = True
 noiseType = "Gaussian"
-noiseScale = 0.4
+noiseScale = 0.2
 # ========== spin-up settings
 initPerturb = 0.1
 initSpingUpTime = 100.
@@ -17,3 +17,4 @@ timeArray = np.arange(0, timeLength+dT, dT)
 NtimeStep = len(timeArray)
 intenseTimeArray = np.arange(0, timeLength+intensedT, intensedT)
 intesneNtimeStep = len(intenseTimeArray)
+
