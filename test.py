@@ -2,7 +2,7 @@ import numpy as np
 from scipy.integrate import ode
 import copy
 from scipy.optimize import minimize
-
+from matplotlib.pyplot import *
 from initValueGenerate import Lorenz96
 from parameterControl import *
 from dataRecorder import RecordCollector
@@ -13,31 +13,32 @@ class fourDVar:
         self.obsOperator = np.loadtxt("initRecord/observationOperator.txt")
 
     def getObservationFromWindow(self, observationState, tidx, NwindowSample=NwindowSample):
+        """including head and tail"""
         sampleObservationState = observationState[tidx*NwindowSample:(tidx+1)*NwindowSample+1]
         return sampleObservationState
 
     def costFunction(self, analysisState, backgroundState, observationState, backgroundEC, observationEC):
-        L_is, M, trajectoryState = self.getTrajectoryState(initState=analysisState)
+        _, trajectoryState = self.getTrajectoryState(initState=analysisState)
         H = self.obsOperator
         backgroundCost = (backgroundState - trajectoryState[0]).transpose() @ np.linalg.inv(backgroundEC) @ (backgroundState - trajectoryState[0])
 
         totalCost = backgroundCost
-        for i in range(NwindowSample+1):
+        for i in range(NwindowSample+1): # including head and tail
             innovation = observationState[i] - H @ trajectoryState[i]
             observationCost = (innovation).transpose() @ np.linalg.inv(observationEC) @ (innovation)
             totalCost += observationCost
         return 0.5 * (totalCost)
 
     def gradientOfCostFunction(self, analysisState, backgroundState, observationState, backgroundEC, observationEC):
-        L_is, M, trajectoryState = self.getTrajectoryState(initState=analysisState)
+        trajectoryM, trajectoryState = self.getTrajectoryState(initState=analysisState)
         H = self.obsOperator
-        gradientBackgroundCost = np.linalg.inv(backgroundEC) @ (backgroundState - trajectoryState[0])
+        gradientBackgroundCost = np.linalg.inv(backgroundEC) @ (trajectoryState[0] - backgroundState)
 
         gradientTotalCost = gradientBackgroundCost
         for i in range(NwindowSample+1):
             innovation = observationState[i] - H @ trajectoryState[i]
-            gradientObservationCost = L_is[i].transpose() @ H.transpose() @ np.linalg.inv(observationEC) @ (innovation)
-            gradientTotalCost += gradientObservationCost
+            gradientObservationCost = trajectoryM[i].transpose() @ H.transpose() @ np.linalg.inv(observationEC) @ (innovation)
+            gradientTotalCost -= gradientObservationCost
         return gradientTotalCost
 
     # >>>>>>>>> TLM >>>>>>>>>>
@@ -61,16 +62,14 @@ class fourDVar:
         trajectoryState = np.zeros((NwindowSample+1, len(initState)))
         trajectoryState[0] = initState
         ddT = dT / NwindowSample
-        M = np.identity(Ngrid)
-        L_is = np.zeros((NwindowSample+1, Ngrid, Ngrid))
-        L_is[0] = np.identity(Ngrid)
+        trajectoryM = np.zeros((NwindowSample+1, Ngrid, Ngrid))
+        trajectoryM[0] = np.identity(Ngrid)
         for i in range(NwindowSample):
             F = self.getJacobianOfForceODE(xState = trajectoryState[i])
             L_i = np.identity(Ngrid) + ddT * F
             trajectoryState[i+1] = trajectoryState[i] + ddT * self.forceODE(x=trajectoryState[i])
-            M = L_i @ M
-            L_is[i+1] = L_i
-        return L_is, M, trajectoryState
+            trajectoryM[i+1] = L_i @ trajectoryM[i]
+        return trajectoryM, trajectoryState
     # <<<<<<<<<< TLM <<<<<<<<<<
 
     # forecast
@@ -113,17 +112,16 @@ if __name__ == "__main__":
     fourDvar.MeanError = np.mean(fourDvar.analysisState - xTruth[0])
     #dataRecorder.record(fourDvar, tidx=0)
     print("{:02f}: {:05f}".format(0, fourDvar.RMSE))
-    for tidx, nowT in enumerate(timeArray[:-1]):
-        fourDvar.observationState = fourDvar.getObservationFromWindow(xFullObservation, tidx=tidx+1)
 
+    for tidx, nowT in enumerate(timeArray[:10]):
+        fourDvar.observationState = fourDvar.getObservationFromWindow(xFullObservation, tidx=tidx+1)
+        fourDvar.truthState = fourDvar.getObservationFromWindow(xTruth, tidx=tidx+1)
         fourDvar.forecastState = fourDvar.getForecastState(fourDvar.analysisState, nowT=nowT)
         fourDvar.analysisState = fourDvar.getAnalysisState(backgroundState=fourDvar.forecastState, \
                                                            observationState=fourDvar.observationState, \
                                                            backgroundEC=fourDvar.forecastEC, \
                                                            observationEC=fourDvar.observationEC)
 
-        fourDvar.RMSE = np.sqrt(np.mean((fourDvar.analysisState - xTruth[tidx+1])**2))
-        fourDvar.MeanError = np.mean(fourDvar.analysisState - xTruth[tidx+1])
         #dataRecorder.record(fourDvar, tidx=tidx+1)
         print("{:02f}: {:05f}".format(nowT+dT, fourDvar.RMSE))
     #dataRecorder.saveToTxt()
