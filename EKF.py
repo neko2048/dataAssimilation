@@ -69,12 +69,12 @@ class ExtKalFil:
 
 if __name__ == "__main__":
     # states
-    xInitAnalysis = np.loadtxt("initRecord/{}/initAnalysisState.txt".format(subFolderName))
-    xFullObservation = np.loadtxt("initRecord/{}/sparseObservationState.txt".format(subFolderName))
-    xTruth = np.loadtxt("initRecord/{}/sparseTruthState.txt".format(subFolderName))
+    xInitAnalysis = np.loadtxt("{}/initRecord/{}/initAnalysisState.txt".format(observationOperatorType, subFolderName))
+    xFullObservation = np.loadtxt("{}/initRecord/{}/sparseObservationState.txt".format(observationOperatorType, subFolderName))
+    xTruth = np.loadtxt("{}/initRecord/{}/sparseTruthState.txt".format(observationOperatorType, subFolderName))
 
     # covariance 
-    analysisEC = np.loadtxt("initRecord/{}/initEC.txt".format(subFolderName))
+    analysisEC = np.loadtxt("{}/initRecord/{}/initEC.txt".format(observationOperatorType, subFolderName))
     observationEC = np.identity(Ngrid) * (noiseScale ** 2)
 
     # collector
