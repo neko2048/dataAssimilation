@@ -16,3 +16,6 @@ python 4DVar.py
 
 echo "========== run incre4DVar =========="
 python incre4DVar.py
+
+echo "========== run NoDA =========="
+python noDA.py

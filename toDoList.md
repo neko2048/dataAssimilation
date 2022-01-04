@@ -56,3 +56,5 @@
         * Mixing0.5
 # Analysis
 * 6Methods in Gaussian/Laplace/Mixing0.5 (scale=0.4)
+* 6Methods in Gaussian/Laplace/Mixing0.5 (scale=0.2)
+* 6Methods based on Same INIT/TRUTH but different NOISE

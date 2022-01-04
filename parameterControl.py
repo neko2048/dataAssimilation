@@ -8,19 +8,22 @@ intensedT = 0.01
 
 dx = 1
 isSave = True
-noiseType = "Laplace"
-noiseScale = 0.4
+noiseType = "Mixing"
+noiseScale = 0.2
 gaussianRatio = 0.5
 observationOperatorType = "halfOBSOPT"
+isCommonTruthInit = True
 # ========== spin-up settings
 initPerturb = 0.1
 initSpingUpTime = 100.
 
-# ========== don't touch these below
+# ========== don't touch these below (option controlling)
 if noiseType != "Mixing":
     subFolderName = noiseType + "_" + str(noiseScale)
 else:
     subFolderName = noiseType + str(gaussianRatio) + "_" +str(noiseScale)
+
+
 # ========== time control
 timeArray = np.arange(0, timeLength+dT, dT)
 NtimeStep = len(timeArray)
