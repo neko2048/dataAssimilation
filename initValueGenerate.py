@@ -103,14 +103,16 @@ if __name__ == "__main__":
 
     # ========== Observation Operator for all DA method
     observationOperator = np.identity(Ngrid)
-
+    if "half" in observationOperatorType:
+        for i in range(Ngrid, 2):
+            observationOperator[i, i] = 0
     if isSave:
-        pathlib.Path("./initRecord/{}".format(subFolderName)).mkdir(parents=True, exist_ok=True)
-        np.savetxt('initRecord/{}/truthState.txt'.format(subFolderName), truthState)
-        np.savetxt('initRecord/{}/sparseTruthState.txt'.format(subFolderName), sparseTruthState)
-        np.savetxt('initRecord/{}/initAnalysisState.txt'.format(subFolderName), initAnalysisState)
-        np.savetxt('initRecord/{}/fullObservationState.txt'.format(subFolderName), fullObservationState)
-        np.savetxt('initRecord/{}/sparseObservationState.txt'.format(subFolderName), sparseObservationState)
-        np.savetxt('initRecord/{}/initEC.txt'.format(subFolderName), observationEC)
-        np.savetxt('initRecord/observationOperator.txt', observationOperator)
-        print("saved successfully in ./initRecord/{}".format(subFolderName))
+        pathlib.Path("{}/initRecord/{}".format(observationOperatorType, subFolderName)).mkdir(parents=True, exist_ok=True)
+        np.savetxt('{}/initRecord/{}/truthState.txt'.format(observationOperatorType, subFolderName), truthState)
+        np.savetxt('{}/initRecord/{}/sparseTruthState.txt'.format(observationOperatorType, subFolderName), sparseTruthState)
+        np.savetxt('{}/initRecord/{}/initAnalysisState.txt'.format(observationOperatorType, subFolderName), initAnalysisState)
+        np.savetxt('{}/initRecord/{}/fullObservationState.txt'.format(observationOperatorType, subFolderName), fullObservationState)
+        np.savetxt('{}/initRecord/{}/sparseObservationState.txt'.format(observationOperatorType, subFolderName), sparseObservationState)
+        np.savetxt('{}/initRecord/{}/initEC.txt'.format(observationOperatorType, subFolderName), observationEC)
+        np.savetxt('{}/initRecord/observationOperator.txt'.format(observationOperatorType), observationOperator)
+        print("saved successfully in ./{}/initRecord/{}".format(observationOperatorType, subFolderName))

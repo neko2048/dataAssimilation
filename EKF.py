@@ -7,7 +7,7 @@ from dataRecorder import RecordCollector
 class ExtKalFil:
     def __init__(self, xInitAnalysis):
         self.xInitAnalysis = xInitAnalysis
-        self.obsOperator = np.loadtxt("initRecord/observationOperator.txt")
+        self.obsOperator = np.loadtxt("{}/initRecord/observationOperator.txt".format(observationOperatorType))
 
     def forceODE(self, x, force=force):
         return (np.roll(x, -1) - np.roll(x, 2)) * np.roll(x, 1) - x + force

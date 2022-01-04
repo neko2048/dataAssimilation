@@ -8,9 +8,10 @@ intensedT = 0.01
 
 dx = 1
 isSave = True
-noiseType = "Laplace"
-noiseScale = 0.4
+noiseType = "Mixing"
+noiseScale = 0.2
 gaussianRatio = 0.5
+observationOperatorType = "fullOBSOPT"
 # ========== spin-up settings
 initPerturb = 0.1
 initSpingUpTime = 100.

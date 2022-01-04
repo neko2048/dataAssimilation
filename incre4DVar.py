@@ -10,7 +10,7 @@ from dataRecorder import RecordCollector
 class increFourDVar:
     def __init__(self, xInitAnalysis):
         self.xInitAnalysis = xInitAnalysis
-        self.obsOperator = np.loadtxt("initRecord/observationOperator.txt")
+        self.obsOperator = np.loadtxt("{}/initRecord/observationOperator.txt".format(observationOperatorType))
 
     def getObservationFromWindow(self, observationState, tidx, NwindowSample=NwindowSample):
         """including head and tail"""
