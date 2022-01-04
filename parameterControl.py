@@ -2,16 +2,16 @@ import numpy as np
 # ========== parameters
 Ngrid = 40
 force = 8.
-timeLength = 10
+timeLength = 20
 dT = 0.05
 intensedT = 0.01
 
 dx = 1
 isSave = True
 noiseType = "Gaussian"
-noiseScale = 0.2
+noiseScale = 0.4
 gaussianRatio = 0.5
-observationOperatorType = "fullOBSOPT"
+observationOperatorType = "halfOBSOPT"
 # ========== spin-up settings
 initPerturb = 0.1
 initSpingUpTime = 100.

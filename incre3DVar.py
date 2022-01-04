@@ -69,7 +69,10 @@ if __name__ == "__main__":
 
     # covariance 
     analysisEC = np.loadtxt("{}/initRecord/{}/initEC.txt".format(observationOperatorType, subFolderName))
-    observationEC = np.identity(Ngrid) * (noiseScale ** 2)
+    if "full" in observationOperatorType:
+        observationEC = np.identity(Ngrid) * (noiseScale ** 2)
+    else:
+        observationEC = np.identity(int(Ngrid/2)) * (noiseScale ** 2)
 
     # collector
     dataRecorder = RecordCollector(methodName="increThreeDVar", noiseType=noiseType)
@@ -101,4 +104,4 @@ if __name__ == "__main__":
         increThreeDvar.MeanError = np.mean(increThreeDvar.analysisState - xTruth[tidx+1])
         dataRecorder.record(increThreeDvar, tidx=tidx+1)
         print("{:02f}: {:05f}".format(nowT+dT, increThreeDvar.RMSE))
-    dataRecorder.saveToTxt()
+    #dataRecorder.saveToTxt()

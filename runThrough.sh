@@ -1,6 +1,6 @@
 #!/bin/bash
-#echo "========== Generate Initial Value =========="
-#python initValueGenerate.py
+echo "========== Generate Initial Value =========="
+python initValueGenerate.py
 
 echo "========== run EKF =========="
 python EKF.py

@@ -91,7 +91,7 @@ class increFourDVar:
 
     def outerLoop(self, guessState, backgroundState, observationState, backgroundEC, observationEC, NinnerLoop=5):
         trajectoryM, trajectoryState = self.getTrajectoryState(initState=guessState)
-        innovation = np.zeros((NwindowSample+1, Ngrid))
+        innovation = np.zeros((NwindowSample+1, int(Ngrid/2)))
         for i in range(NwindowSample+1):
             innovation[i] = observationState[i] - self.obsOperator @ trajectoryState[i]
 
@@ -119,7 +119,10 @@ if __name__ == "__main__":
 
     # covariance 
     analysisEC = np.loadtxt("{}/initRecord/{}/initEC.txt".format(observationOperatorType, subFolderName))
-    observationEC = np.identity(Ngrid) * (noiseScale ** 2)
+    if "full" in observationOperatorType:
+        observationEC = np.identity(Ngrid) * (noiseScale ** 2)
+    else:
+        observationEC = np.identity(int(Ngrid/2)) * (noiseScale ** 2)
 
     # collector
     dataRecorder = RecordCollector(methodName="increFourDVar", noiseType=noiseType)

@@ -3,6 +3,7 @@ from matplotlib.pyplot import *
 import sys
 sys.path.append("../")
 from parameterControl import *
+import matplotlib.gridspec as gridspec
 
 class dataReader:
     def __init__(self, methodName, subFolderName):
@@ -24,6 +25,7 @@ class dataReader:
 
 if __name__ == "__main__":
     subFolderName = "Gaussian_0.4"
+    noDA = dataReader(methodName="noDA", subFolderName=subFolderName)
     ekf = dataReader(methodName="EKF", subFolderName=subFolderName)
     threeDvar = dataReader(methodName="threeDVar", subFolderName=subFolderName)
     increThreeDvar = dataReader(methodName="increThreeDVar", subFolderName=subFolderName)
@@ -32,26 +34,47 @@ if __name__ == "__main__":
     truthState = np.loadtxt("./initRecord/{}/truthState.txt".format(subFolderName))
     observationState = np.loadtxt("./initRecord/{}/fullObservationState.txt".format(subFolderName))
 
-    #figure(figsize=(16, 8))
-    #grid(True)
-    #plot(timeArray, ekf.RMSE, label=ekf.methodName, color="#1f77b4")
-    #plot(timeArray, threeDvar.RMSE, label=threeDvar.methodName, color="#ff7f0e")
-    #plot(timeArray, increThreeDvar.RMSE, label=increThreeDvar.methodName, color="#2ca02c")
-    #plot(timeArray, fourDvar.RMSE, label=fourDvar.methodName, color="#d62728")
-    #plot(timeArray, increFourDvar.RMSE, label=increFourDvar.methodName, color="#9467bd")
+    gs = gridspec.GridSpec(2, 2)
+    figure(figsize=(17, 8), dpi=200)
+    ax = subplot(gs[0, :])
+    grid(True)
+    plot(timeArray, ekf.RMSE, label=ekf.methodName, linewidth=3, color="#1f77b4")
+    plot(timeArray, threeDvar.RMSE, label=threeDvar.methodName, linewidth=3, color="#ff7f0e")
+    plot(timeArray, increThreeDvar.RMSE, label=increThreeDvar.methodName, linewidth=3, color="#2ca02c")
+    plot(timeArray, fourDvar.RMSE, label=fourDvar.methodName, linewidth=3, color="#d62728")
+    plot(timeArray, increFourDvar.RMSE, label=increFourDvar.methodName, linewidth=3, color="#9467bd")
+    plot(timeArray, noDA.RMSE, label=noDA.methodName, linewidth=3, color="black")
+    xlim(np.min(timeArray), np.max(timeArray));ylim(-0.5, 7)
+    xlabel("Time", fontsize=12);ylabel("RMSE Error", fontsize=12)
+    legend(fontsize=10, loc='right')
+    title("RMSE | {HType} | NoiseType: {NT} | NoiseScale: {NS}"\
+          .format(HType=observationOperatorType, NT=noiseType, NS=noiseScale), 
+          fontsize=15)
     #
-    #plot(timeArray, ekf.meanError, "--", color="#1f77b4")
-    #plot(timeArray, threeDvar.meanError, "--", color="#ff7f0e")
-    #plot(timeArray, increThreeDvar.meanError, "--", color="#2ca02c")
-    #plot(timeArray, fourDvar.meanError, "--", color="#d62728")
-    #plot(timeArray, increFourDvar.meanError, "--", color="#9467bd")
-    #xlabel("Time")
-    #ylabel("Error")
-    #noiseType, noiseScale = subFolderName.split("_")
-    #title("RMSE (Solid) & Mean Error (Dash) | Half Observation Operator | NoiseType: {NT} | NoiseScale: {NS}"\
-    #      .format(NT=noiseType, NS=noiseScale))
-    #legend()
-    #ylim(-0.5, 2)
-    #xlim(0, 10)
+    ax = subplot(gs[1, 0])
+    grid(True)
+    plot(timeArray, ekf.RMSE, linewidth=3, color="#1f77b4")
+    plot(timeArray, threeDvar.RMSE, linewidth=3, color="#ff7f0e")
+    plot(timeArray, increThreeDvar.RMSE, linewidth=3, color="#2ca02c")
+    plot(timeArray, fourDvar.RMSE, linewidth=3, color="#d62728")
+    plot(timeArray, increFourDvar.RMSE, linewidth=3, color="#9467bd")
+    plot(timeArray, noDA.RMSE, label=noDA.methodName, linewidth=3, color="black")
+    xlim(np.min(timeArray), np.max(timeArray));ylim(-0.5, 7)
+    xlabel("Time");ylabel("RMSE Error")
+    noiseType, noiseScale = subFolderName.split("_")
+    #
+    ax = subplot(gs[1, 1])
+    grid(True)
+    plot(timeArray, ekf.RMSE, linewidth=3, color="#1f77b4")
+    plot(timeArray, threeDvar.RMSE, linewidth=3, color="#ff7f0e")
+    plot(timeArray, increThreeDvar.RMSE, linewidth=3, color="#2ca02c")
+    plot(timeArray, fourDvar.RMSE, linewidth=3, color="#d62728")
+    plot(timeArray, increFourDvar.RMSE, linewidth=3, color="#9467bd")
+    xlim(np.min(timeArray), np.max(timeArray));ylim(-0.5, 7)
+    xlabel("Time");ylabel("RMSE Error")
 
-    show()
+    savefig("RMSE_{HType}_NoiseType_{NT}_NoiseScale_{NS}.jpg"\
+          .format(HType=observationOperatorType, NT=noiseType, NS=noiseScale))
+    print("RMSE_{HType}_NoiseType_{NT}_NoiseScale_{NS}.jpg saved"\
+          .format(HType=observationOperatorType, NT=noiseType, NS=noiseScale))
+    #show()

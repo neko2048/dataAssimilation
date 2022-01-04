@@ -75,7 +75,10 @@ if __name__ == "__main__":
 
     # covariance 
     analysisEC = np.loadtxt("{}/initRecord/{}/initEC.txt".format(observationOperatorType, subFolderName))
-    observationEC = np.identity(Ngrid) * (noiseScale ** 2)
+    if "full" in observationOperatorType:
+        observationEC = np.identity(Ngrid) * (noiseScale ** 2)
+    else:
+        observationEC = np.identity(int(Ngrid/2)) * (noiseScale ** 2)
 
     # collector
     dataRecorder = RecordCollector(methodName="EKF", noiseType=noiseType)
@@ -90,7 +93,7 @@ if __name__ == "__main__":
     ekf.observationEC = observationEC
     ekf.forecastState = np.zeros(Ngrid)
     ekf.forecastEC = np.zeros((Ngrid, Ngrid))
-    ekf.RMSE = np.sum((ekf.analysisState - xTruth[0])**2)
+    ekf.RMSE = np.sqrt(np.mean((ekf.analysisState - xTruth[0])**2))
     ekf.MeanError = np.mean(ekf.analysisState - xTruth[0])
     dataRecorder.record(ekf, tidx=0)
     print("{:02f}: {:05f}".format(0, ekf.RMSE))
@@ -107,6 +110,7 @@ if __name__ == "__main__":
                                                  observationState=ekf.observationState, \
                                                  KalmanGain=ekf.KalmanGain)
         ekf.analysisEC = ekf.getAnalysisEC(forecastEC=ekf.forecastEC, KalmanGain=ekf.KalmanGain, inflation=2)
+
         ekf.RMSE = np.sqrt(np.mean((ekf.analysisState - xTruth[tidx+1])**2))
         ekf.MeanError = np.mean(ekf.analysisState - xTruth[tidx+1])
         dataRecorder.record(ekf, tidx=tidx+1)

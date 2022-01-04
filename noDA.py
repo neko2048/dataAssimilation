@@ -33,7 +33,10 @@ if __name__ == "__main__":
 
     # covariance 
     analysisEC = np.loadtxt("{}/initRecord/{}/initEC.txt".format(observationOperatorType, subFolderName))
-    observationEC = np.identity(Ngrid) * (noiseScale ** 2)
+    if "full" in observationOperatorType:
+        observationEC = np.identity(Ngrid) * (noiseScale ** 2)
+    else:
+        observationEC = np.identity(int(Ngrid/2)) * (noiseScale ** 2)
 
     # collector
     dataRecorder = RecordCollector(methodName="noDA", noiseType=noiseType)

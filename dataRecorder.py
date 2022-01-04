@@ -9,7 +9,10 @@ class RecordCollector:
         #self.analysisEC    = np.zeros((NtimeStep, Ngrid, Ngrid))
         self.forecastState = np.zeros((NtimeStep, Ngrid))
         #self.forecastEC    = np.zeros((NtimeStep, Ngrid, Ngrid))
-        self.observationState = np.zeros((NtimeStep, Ngrid))
+        if "half" in observationOperatorType:
+            self.observationState = np.zeros((NtimeStep, int(Ngrid/2)))
+        elif "full" in observationOperatorType:
+            self.observationState = np.zeros((NtimeStep, Ngrid))
         #self.observationEC = np.zeros((NtimeStep, Ngrid, Ngrid))
         self.RMSE          = np.zeros(NtimeStep)
         self.MeanError     = np.zeros(NtimeStep)

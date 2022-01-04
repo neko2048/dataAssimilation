@@ -104,8 +104,13 @@ if __name__ == "__main__":
     # ========== Observation Operator for all DA method
     observationOperator = np.identity(Ngrid)
     if "half" in observationOperatorType:
-        for i in range(Ngrid, 2):
-            observationOperator[i, i] = 0
+        observationOperator = np.zeros((int(Ngrid/2), Ngrid))
+        for i in range(int(Ngrid/2)):
+            observationOperator[i, i*2] = 1
+        fullObservationState = (observationOperator @ fullObservationState.transpose()).transpose()
+        sparseObservationState = (observationOperator @ sparseObservationState.transpose()).transpose()
+
+
     if isSave:
         pathlib.Path("{}/initRecord/{}".format(observationOperatorType, subFolderName)).mkdir(parents=True, exist_ok=True)
         np.savetxt('{}/initRecord/{}/truthState.txt'.format(observationOperatorType, subFolderName), truthState)
@@ -115,4 +120,4 @@ if __name__ == "__main__":
         np.savetxt('{}/initRecord/{}/sparseObservationState.txt'.format(observationOperatorType, subFolderName), sparseObservationState)
         np.savetxt('{}/initRecord/{}/initEC.txt'.format(observationOperatorType, subFolderName), observationEC)
         np.savetxt('{}/initRecord/observationOperator.txt'.format(observationOperatorType), observationOperator)
-        print("saved successfully in ./{}/initRecord/{}".format(observationOperatorType, subFolderName))
+        print("saved successfully in ./{}/initRecord/{}".format(observationOperatorType, subFolderName))#
