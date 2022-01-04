@@ -1,5 +1,7 @@
 import numpy as np 
 from matplotlib.pyplot import *
+import sys
+sys.path.append("../")
 from parameterControl import *
 
 class dataReader:
@@ -21,24 +23,35 @@ class dataReader:
             self.meanError[-1] = np.nan
 
 if __name__ == "__main__":
-    ekf_L04 = dataReader(methodName="EKF", subFolderName="Laplace_0.4")
-    threeDvar_L04 = dataReader(methodName="threeDVar", subFolderName="Laplace_0.4")
-    increThreeDvar_L04 = dataReader(methodName="increThreeDVar", subFolderName="Laplace_0.4")
-    fourDvar_L04 = dataReader(methodName="fourDVar", subFolderName="Laplace_0.4")
-    increFourDvar_L04 = dataReader(methodName="increFourDVar", subFolderName="Laplace_0.4")
+    subFolderName = "Gaussian_0.4"
+    ekf = dataReader(methodName="EKF", subFolderName=subFolderName)
+    threeDvar = dataReader(methodName="threeDVar", subFolderName=subFolderName)
+    increThreeDvar = dataReader(methodName="increThreeDVar", subFolderName=subFolderName)
+    fourDvar = dataReader(methodName="fourDVar", subFolderName=subFolderName)
+    increFourDvar = dataReader(methodName="increFourDVar", subFolderName=subFolderName)
+    truthState = np.loadtxt("./initRecord/{}/truthState.txt".format(subFolderName))
+    observationState = np.loadtxt("./initRecord/{}/fullObservationState.txt".format(subFolderName))
 
-    plot(timeArray, ekf_L04.RMSE, label=ekf_L04.methodName, color="#1f77b4")
-    plot(timeArray, threeDvar_L04.RMSE, label=threeDvar_L04.methodName, color="#ff7f0e")
-    plot(timeArray, increThreeDvar_L04.RMSE, label=increThreeDvar_L04.methodName, color="#2ca02c")
-    plot(timeArray, fourDvar_L04.RMSE, label=fourDvar_L04.methodName, color="#d62728")
-    plot(timeArray, increFourDvar_L04.RMSE, label=increFourDvar_L04.methodName, color="#9467bd")
-    
-    plot(timeArray, ekf_L04.meanError, "--", color="#1f77b4")
-    plot(timeArray, threeDvar_L04.meanError, "--", color="#ff7f0e")
-    plot(timeArray, increThreeDvar_L04.meanError, "--", color="#2ca02c")
-    plot(timeArray, fourDvar_L04.meanError, "--", color="#d62728")
-    plot(timeArray, increFourDvar_L04.meanError, "--", color="#9467bd")
+    #figure(figsize=(16, 8))
+    #grid(True)
+    #plot(timeArray, ekf.RMSE, label=ekf.methodName, color="#1f77b4")
+    #plot(timeArray, threeDvar.RMSE, label=threeDvar.methodName, color="#ff7f0e")
+    #plot(timeArray, increThreeDvar.RMSE, label=increThreeDvar.methodName, color="#2ca02c")
+    #plot(timeArray, fourDvar.RMSE, label=fourDvar.methodName, color="#d62728")
+    #plot(timeArray, increFourDvar.RMSE, label=increFourDvar.methodName, color="#9467bd")
+    #
+    #plot(timeArray, ekf.meanError, "--", color="#1f77b4")
+    #plot(timeArray, threeDvar.meanError, "--", color="#ff7f0e")
+    #plot(timeArray, increThreeDvar.meanError, "--", color="#2ca02c")
+    #plot(timeArray, fourDvar.meanError, "--", color="#d62728")
+    #plot(timeArray, increFourDvar.meanError, "--", color="#9467bd")
+    #xlabel("Time")
+    #ylabel("Error")
+    #noiseType, noiseScale = subFolderName.split("_")
+    #title("RMSE (Solid) & Mean Error (Dash) | Half Observation Operator | NoiseType: {NT} | NoiseScale: {NS}"\
+    #      .format(NT=noiseType, NS=noiseScale))
+    #legend()
+    #ylim(-0.5, 2)
+    #xlim(0, 10)
 
-    legend()
-    ylim(-0.5, 2)
     show()
