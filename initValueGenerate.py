@@ -35,8 +35,8 @@ class dataGenerator:
         self.NtimeStep = NtimeStep
 
     def setupLorenz96(self, Nstep):
-        self.xInit = self.initPerturb * np.random.randn(self.Ngrid)
-        self.lorenz96 = Lorenz96(self.xInit)
+        xInit = self.initPerturb * np.random.randn(self.Ngrid)
+        self.lorenz96 = Lorenz96(xInit)
         self.lorenz96.solver = self.lorenz96.getODESolver(Nstep=Nstep)
 
     def getInitValue(self):
@@ -44,8 +44,8 @@ class dataGenerator:
         xInit = self.lorenz96.solveODE(endTime=self.initSpingUpTime)
         return xInit
 
-    def getSeriesTruth(self):
-        xTruth = self.getInitValue() # initial truth
+    def getSeriesTruth(self, initValue):
+        xTruth = initValue # initial truth
         self.lorenz96 = Lorenz96(xTruth)
         solver = self.lorenz96.getODESolver()
         nowTimeStep = 1
@@ -84,7 +84,8 @@ class dataGenerator:
 if __name__ == "__main__":
     # ========== build truth
     stateGenerator = dataGenerator(NtimeStep=intesneNtimeStep)
-    truthState = stateGenerator.getSeriesTruth()
+    truthState = stateGenerator.getInitValue()
+    truthState = stateGenerator.getSeriesTruth(initValue=truthState)
     # truthState shape: (1001, 40)
     sparseTruthState  = stateGenerator.sparseVar(truthState)
     # sparseTruthState shape: (201, 40)
@@ -120,4 +121,5 @@ if __name__ == "__main__":
         np.savetxt('{}/initRecord/{}/sparseObservationState.txt'.format(observationOperatorType, subFolderName), sparseObservationState)
         np.savetxt('{}/initRecord/{}/initEC.txt'.format(observationOperatorType, subFolderName), observationEC)
         np.savetxt('{}/initRecord/observationOperator.txt'.format(observationOperatorType), observationOperator)
-        print("saved successfully in ./{}/initRecord/{}".format(observationOperatorType, subFolderName))#
+        print("saved successfully in ./{}/initRecord/{}".format(observationOperatorType, subFolderName))
+

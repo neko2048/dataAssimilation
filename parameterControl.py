@@ -7,7 +7,7 @@ dT = 0.05
 intensedT = 0.01
 
 dx = 1
-isSave = True
+isSave = False
 noiseType = "Mixing"
 noiseScale = 0.2
 gaussianRatio = 0.5
@@ -22,7 +22,6 @@ if noiseType != "Mixing":
     subFolderName = noiseType + "_" + str(noiseScale)
 else:
     subFolderName = noiseType + str(gaussianRatio) + "_" +str(noiseScale)
-
 
 # ========== time control
 timeArray = np.arange(0, timeLength+dT, dT)
