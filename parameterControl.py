@@ -1,8 +1,5 @@
 import numpy as np
-# ========== input parameters
-noiseType, noiseScale, observationOperatorType = input().split(" ")
-
-# ========== self-adjusted parameters
+# ========== parameters
 Ngrid = 40
 force = 8.
 timeLength = 10
@@ -11,10 +8,10 @@ intensedT = 0.01
 
 dx = 1
 isSave = True
-#noiseType = "Mixing"
-#noiseScale = 0.2
+noiseType = "Mixing"
+noiseScale = 0.2
 gaussianRatio = 0.5
-#observationOperatorType = "fullOBSOPT"
+observationOperatorType = "fullOBSOPT"
 # ========== spin-up settings
 initPerturb = 0.1
 initSpingUpTime = 100.

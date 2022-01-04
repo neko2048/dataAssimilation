@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "========== Generate Initial Data =========="
-echo "Gaussian 0.2 fullOBSOPT" | python initValueGenerator.py 
+echo "Gaussian 0.2 fullOBSOPT" | python initValueGenerate.py 
 # noiseType, noiseScale, gaussianRatio, observationOperatorType
 
 echo "========== Run EKF =========="
