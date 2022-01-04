@@ -11,7 +11,7 @@ isSave = True
 noiseType = "Gaussian"
 noiseScale = 0.2
 gaussianRatio = 0.5
-observationOperatorType = "halfOBSOPT"
+observationOperatorType = "fullOBSOPT"
 # ========== spin-up settings
 initPerturb = 0.1
 initSpingUpTime = 100.
