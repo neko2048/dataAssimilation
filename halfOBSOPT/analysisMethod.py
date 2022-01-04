@@ -24,7 +24,7 @@ class dataReader:
             self.meanError[-1] = np.nan
 
 if __name__ == "__main__":
-    subFolderName = "Gaussian_0.4"
+    subFolderName = "Laplace_0.4"
     noDA = dataReader(methodName="noDA", subFolderName=subFolderName)
     ekf = dataReader(methodName="EKF", subFolderName=subFolderName)
     threeDvar = dataReader(methodName="threeDVar", subFolderName=subFolderName)
@@ -40,9 +40,9 @@ if __name__ == "__main__":
     grid(True)
     plot(timeArray, ekf.RMSE, label=ekf.methodName, linewidth=3, color="#1f77b4")
     plot(timeArray, threeDvar.RMSE, label=threeDvar.methodName, linewidth=3, color="#ff7f0e")
-    plot(timeArray, increThreeDvar.RMSE, label=increThreeDvar.methodName, linewidth=3, color="#2ca02c")
+    plot(timeArray, increThreeDvar.RMSE, "--", label=increThreeDvar.methodName, linewidth=3, color="#2ca02c")
     plot(timeArray, fourDvar.RMSE, label=fourDvar.methodName, linewidth=3, color="#d62728")
-    plot(timeArray, increFourDvar.RMSE, label=increFourDvar.methodName, linewidth=3, color="#9467bd")
+    plot(timeArray, increFourDvar.RMSE, "--", label=increFourDvar.methodName, linewidth=3, color="#9467bd")
     plot(timeArray, noDA.RMSE, label=noDA.methodName, linewidth=3, color="black")
     xlim(np.min(timeArray), np.max(timeArray));ylim(-0.5, 7)
     xlabel("Time", fontsize=12);ylabel("RMSE Error", fontsize=12)
@@ -55,9 +55,9 @@ if __name__ == "__main__":
     grid(True)
     plot(timeArray, ekf.RMSE, linewidth=3, color="#1f77b4")
     plot(timeArray, threeDvar.RMSE, linewidth=3, color="#ff7f0e")
-    plot(timeArray, increThreeDvar.RMSE, linewidth=3, color="#2ca02c")
+    plot(timeArray, increThreeDvar.RMSE, "--", linewidth=3, color="#2ca02c")
     plot(timeArray, fourDvar.RMSE, linewidth=3, color="#d62728")
-    plot(timeArray, increFourDvar.RMSE, linewidth=3, color="#9467bd")
+    plot(timeArray, increFourDvar.RMSE, "--", linewidth=3, color="#9467bd")
     plot(timeArray, noDA.RMSE, label=noDA.methodName, linewidth=3, color="black")
     xlim(np.min(timeArray), np.max(timeArray));ylim(-0.5, 7)
     xlabel("Time");ylabel("RMSE Error")
@@ -67,9 +67,9 @@ if __name__ == "__main__":
     grid(True)
     plot(timeArray, ekf.RMSE, linewidth=3, color="#1f77b4")
     plot(timeArray, threeDvar.RMSE, linewidth=3, color="#ff7f0e")
-    plot(timeArray, increThreeDvar.RMSE, linewidth=3, color="#2ca02c")
+    plot(timeArray, increThreeDvar.RMSE, "--", linewidth=3, color="#2ca02c")
     plot(timeArray, fourDvar.RMSE, linewidth=3, color="#d62728")
-    plot(timeArray, increFourDvar.RMSE, linewidth=3, color="#9467bd")
+    plot(timeArray, increFourDvar.RMSE, "--", linewidth=3, color="#9467bd")
     xlim(np.min(timeArray), np.max(timeArray));ylim(-0.5, 7)
     xlabel("Time");ylabel("RMSE Error")
 

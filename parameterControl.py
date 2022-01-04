@@ -8,7 +8,7 @@ intensedT = 0.01
 
 dx = 1
 isSave = True
-noiseType = "Gaussian"
+noiseType = "Laplace"
 noiseScale = 0.4
 gaussianRatio = 0.5
 observationOperatorType = "halfOBSOPT"

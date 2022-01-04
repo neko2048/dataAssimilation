@@ -55,4 +55,4 @@
         * Laplace
         * Mixing0.5
 # Analysis
-* Different 
+* 6Methods in Gaussian/Laplace/Mixing0.5 (scale=0.4)

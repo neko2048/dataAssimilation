@@ -79,7 +79,7 @@ class increFourDVar:
         return backgroundState
 
     # analyzing
-    def getAnalysisState(self, backgroundState, observationState, backgroundEC, observationEC, NouterLoop=4):
+    def getAnalysisState(self, backgroundState, observationState, backgroundEC, observationEC, NouterLoop=1):
         guessState = backgroundState
         for outer in range(NouterLoop):
             guessState = self.outerLoop(guessState=guessState, \
@@ -89,20 +89,20 @@ class increFourDVar:
                                         observationEC = observationEC)
         return guessState
 
-    def outerLoop(self, guessState, backgroundState, observationState, backgroundEC, observationEC, NinnerLoop=5):
+    def outerLoop(self, guessState, backgroundState, observationState, backgroundEC, observationEC, NinnerLoop=1):
         trajectoryM, trajectoryState = self.getTrajectoryState(initState=guessState)
         innovation = np.zeros((NwindowSample+1, int(Ngrid/2)))
         for i in range(NwindowSample+1):
             innovation[i] = observationState[i] - self.obsOperator @ trajectoryState[i]
 
-        analysisIncrement = guessState - backgroundState
+        guessIncrement = guessState - backgroundState
         for inner in range(NinnerLoop):
-            analysisIncrement = self.innerLoop(guessIncrement = analysisIncrement, \
+            guessIncrement = self.innerLoop(guessIncrement = guessIncrement, \
                                                trajectoryM = trajectoryM, 
                                                innovation = innovation, \
                                                backgroundEC = backgroundEC, \
                                                observationEC = observationEC)
-        guessState += analysisIncrement
+        guessState += guessIncrement
         return guessState
 
     def innerLoop(self, guessIncrement, trajectoryM, innovation, backgroundEC, observationEC):

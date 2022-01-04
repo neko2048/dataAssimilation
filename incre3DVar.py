@@ -34,7 +34,7 @@ class increThreeDVar:
         return backgroundState
 
     # analyzing
-    def getAnalysisState(self, backgroundState, observationState, backgroundEC, observationEC, NouterLoop=4):
+    def getAnalysisState(self, backgroundState, observationState, backgroundEC, observationEC, NouterLoop=1):
         guessState = backgroundState
         for outer in range(NouterLoop):
             guessState = self.outerLoop(guessState=guessState, \
@@ -44,15 +44,15 @@ class increThreeDVar:
                                         observationEC = observationEC)
         return guessState
 
-    def outerLoop(self, guessState, backgroundState, observationState, backgroundEC, observationEC, NinnerLoop=5):
+    def outerLoop(self, guessState, backgroundState, observationState, backgroundEC, observationEC, NinnerLoop=1):
         innovation = observationState - self.obsOperator @ guessState
         guessIncrement = guessState - backgroundState
         for inner in range(NinnerLoop):
-            analysisIncrement = self.innerLoop(guessIncrement = guessState, \
-                                               innovation = innovation, \
-                                               backgroundEC = backgroundEC, \
-                                               observationEC = observationEC)
-        guessState += analysisIncrement
+            guessIncrement = self.innerLoop(guessIncrement = guessIncrement, \
+                                            innovation = innovation, \
+                                            backgroundEC = backgroundEC, \
+                                            observationEC = observationEC)
+        guessState += guessIncrement
         return guessState
 
     def innerLoop(self, guessIncrement, innovation, backgroundEC, observationEC):
@@ -104,4 +104,4 @@ if __name__ == "__main__":
         increThreeDvar.MeanError = np.mean(increThreeDvar.analysisState - xTruth[tidx+1])
         dataRecorder.record(increThreeDvar, tidx=tidx+1)
         print("{:02f}: {:05f}".format(nowT+dT, increThreeDvar.RMSE))
-    #dataRecorder.saveToTxt()
+    dataRecorder.saveToTxt()
